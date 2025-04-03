@@ -1,0 +1,10 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "MacWall - A modern wallpaper application",
+  "scripts": {
+    "dev": "cd front-end && npm run dev",
+    "task": "node scripts/dev.js"
+  }
+}
