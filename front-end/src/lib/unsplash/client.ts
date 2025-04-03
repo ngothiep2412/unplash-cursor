@@ -1,12 +1,11 @@
 import { createApi } from 'unsplash-js';
 
-// Types
 export interface UnsplashImage {
   id: string;
   width: number;
   height: number;
-  color: string;
-  blur_hash: string;
+  color: string | null;
+  blur_hash: string | null;
   description: string | null;
   alt_description: string | null;
   urls: {
@@ -31,12 +30,6 @@ export interface UnsplashImage {
       large: string;
     };
   };
-}
-
-export interface SearchResponse {
-  total: number;
-  total_pages: number;
-  results: UnsplashImage[];
 }
 
 // Create and configure the Unsplash client

@@ -3,7 +3,7 @@ import { unsplashClient, type UnsplashImage } from '@/lib/unsplash/client';
 import type { Orientation } from 'unsplash-js';
 
 export function useRandomWallpaper(options?: { query?: string; orientation?: Orientation }) {
-  return useQuery({
+  return useQuery<UnsplashImage, Error>({
     queryKey: ['randomWallpaper', options],
     queryFn: async () => {
       const response = await unsplashClient.photos.getRandom({
@@ -11,35 +11,47 @@ export function useRandomWallpaper(options?: { query?: string; orientation?: Ori
         orientation: options?.orientation || 'landscape',
         count: 1
       });
-      return Array.isArray(response.response) ? response.response[0] : response.response;
+      const photo = Array.isArray(response.response) ? response.response[0] : response.response;
+      if (!photo) throw new Error('No photo found');
+      return photo as unknown as UnsplashImage;
     },
     staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
   });
 }
 
-export function useSearchWallpapers(query: string, page = 1, perPage = 30) {
-  return useQuery({
-    queryKey: ['searchWallpapers', query, page, perPage],
+export function useUnsplashImages(options: { page?: number; perPage?: number; query?: string } = {}) {
+  const { page = 1, perPage = 30, query } = options;
+
+  return useQuery<UnsplashImage[], Error>({
+    queryKey: ['unsplash-images', page, perPage, query],
     queryFn: async () => {
-      const response = await unsplashClient.search.getPhotos({
-        query,
-        page,
-        perPage,
-        orientation: 'landscape'
-      });
-      return response.response;
+      if (query) {
+        const response = await unsplashClient.search.getPhotos({
+          query,
+          page,
+          perPage,
+          orientation: 'landscape'
+        });
+        return (response.response?.results || []) as unknown as UnsplashImage[];
+      } else {
+        const response = await unsplashClient.photos.list({
+          page,
+          perPage
+        });
+        return (response.response || []) as unknown as UnsplashImage[];
+      }
     },
     staleTime: 5 * 60 * 1000,
-    enabled: query.length > 0, // Only run query if search term is provided
   });
 }
 
 export function useWallpaper(id: string) {
-  return useQuery({
+  return useQuery<UnsplashImage, Error>({
     queryKey: ['wallpaper', id],
     queryFn: async () => {
       const response = await unsplashClient.photos.get({ photoId: id });
-      return response.response;
+      if (!response.response) throw new Error('Photo not found');
+      return response.response as unknown as UnsplashImage;
     },
     staleTime: 30 * 60 * 1000, // Consider data stale after 30 minutes
   });

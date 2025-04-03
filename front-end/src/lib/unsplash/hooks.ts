@@ -13,21 +13,27 @@ export function useUnsplashImages(options: UseUnsplashImagesOptions = {}) {
   return useQuery<UnsplashImage[], Error>({
     queryKey: ['unsplash-images', page, perPage, query],
     queryFn: async () => {
-      if (query) {
-        const response = await unsplashClient.search.getPhotos({
-          query,
-          page,
-          perPage,
-          orientation: 'landscape'
-        });
-        return response.response?.results || [];
-      } else {
-        const response = await unsplashClient.photos.list({
-          page,
-          perPage,
-          orientation: 'landscape'
-        });
-        return response.response || [];
+      try {
+        if (query) {
+          const response = await unsplashClient.search.getPhotos({
+            query,
+            page,
+            perPage,
+            orientation: 'landscape'
+          });
+          console.log('Search API Response:', response);
+          return response.response?.results as UnsplashImage[];
+        } else {
+          const response = await unsplashClient.photos.list({
+            page,
+            perPage
+          });
+          console.log('List API Response:', response);
+          return response.response?.results as UnsplashImage[];
+        }
+      } catch (error) {
+        console.error('Error fetching images:', error);
+        throw error;
       }
     }
   });

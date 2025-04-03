@@ -3,10 +3,14 @@
 import { useUnsplashImages } from '@/lib/unsplash/hooks';
 import Gallery from '@/components/Gallery';
 import { useState } from 'react';
+import { UnsplashImage } from '@/lib/unsplash/client';
 
 export default function GalleryPage() {
   const [page, setPage] = useState(1);
   const { data: images, isLoading, error } = useUnsplashImages({ page });
+
+  // Log data khi nó thay đổi
+  console.log('Gallery Images:', images);
 
   if (error) {
     return (
@@ -24,6 +28,9 @@ export default function GalleryPage() {
     );
   }
 
+  // Ensure images is always an array
+  const safeImages = Array.isArray(images) ? images : [];
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="py-8">
@@ -31,7 +38,7 @@ export default function GalleryPage() {
           MacWall Gallery
         </h1>
         <Gallery 
-          images={images || []} 
+          images={safeImages} 
           onImageSelect={(image) => {
             console.log('Selected image:', image);
           }}

@@ -1,9 +1,8 @@
 'use client';
 
 import { UnsplashImage } from '@/lib/unsplash/client';
-import Image from 'next/image';
-import { useState } from 'react';
 import { motion } from 'framer-motion';
+import OptimizedImage from './OptimizedImage';
 
 interface ImageCardProps {
   image: UnsplashImage;
@@ -12,60 +11,38 @@ interface ImageCardProps {
 }
 
 export default function ImageCard({ image, priority = false, onSelect }: ImageCardProps) {
-  const [isLoading, setIsLoading] = useState(true);
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 20 }}
-      className="group relative aspect-[16/10] w-full cursor-pointer overflow-hidden rounded-lg bg-gray-200 shadow-md transition-shadow hover:shadow-xl"
-      onClick={() => onSelect?.(image)}
+      className="group relative aspect-[3/2] w-full overflow-hidden rounded-lg shadow-lg"
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.2 }}
     >
-      <Image
-        src={image.urls.regular}
-        alt={image.description || 'Wallpaper'}
-        fill
-        className={`object-cover transition-all duration-700 ease-in-out group-hover:scale-105 ${
-          isLoading ? 'scale-110 blur-lg' : 'scale-100 blur-0'
-        }`}
-        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      {/* Image */}
+      <OptimizedImage
+        image={image}
         priority={priority}
-        onLoadingComplete={() => setIsLoading(false)}
+        className="h-full w-full object-cover"
+        onClick={() => onSelect?.(image)}
       />
 
-      {/* Hover Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-300 group-hover:bg-opacity-30" />
-
-      {/* Image Info */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            {image.user.profile_image && (
-              <Image
-                src={image.user.profile_image.small}
-                alt={image.user.name}
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
-            )}
-            <span className="text-sm font-medium">{image.user.name}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-xs">
-              {image.width} × {image.height}
-            </span>
+      {/* Hover overlay */}
+      <motion.div
+        className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/60 to-transparent p-4 opacity-0 transition-opacity group-hover:opacity-100"
+        initial={false}
+      >
+        {/* Photographer info */}
+        <div className="flex items-center gap-2">
+          <img
+            src={image.user.profile_image.small}
+            alt={image.user.name}
+            className="h-8 w-8 rounded-full"
+          />
+          <div className="text-white">
+            <p className="text-sm font-medium">{image.user.name}</p>
+            <p className="text-xs opacity-80">@{image.user.username}</p>
           </div>
         </div>
-      </div>
-
-      {/* Loading Indicator */}
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-primary-500" />
-        </div>
-      )}
+      </motion.div>
     </motion.div>
   );
 } 

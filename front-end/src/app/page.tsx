@@ -2,6 +2,7 @@
 
 import { useRandomWallpaper } from '@/hooks/useUnsplash';
 import Image from 'next/image';
+import { UnsplashImage } from '@/lib/unsplash/client';
 
 export default function Home() {
   const { data: wallpaper, isLoading, error } = useRandomWallpaper();
@@ -28,8 +29,8 @@ export default function Home() {
       {wallpaper && (
         <div className="relative aspect-video w-full max-w-4xl overflow-hidden rounded-lg shadow-xl">
           <Image
-            src={wallpaper.urls.regular}
-            alt={wallpaper.description || 'Random wallpaper'}
+            src={(wallpaper as UnsplashImage).urls.regular}
+            alt={(wallpaper as UnsplashImage).description || 'Random wallpaper'}
             fill
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
