@@ -1,10 +1,18 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { unsplashClient, type UnsplashImage, type SearchResponse } from '@/lib/unsplash/client';
+import { unsplashClient, type UnsplashImage } from '@/lib/unsplash/client';
+import type { Orientation } from 'unsplash-js';
 
-export function useRandomWallpaper(options?: { query?: string; orientation?: string }) {
+export function useRandomWallpaper(options?: { query?: string; orientation?: Orientation }) {
   return useQuery({
     queryKey: ['randomWallpaper', options],
-    queryFn: () => unsplashClient.getRandomWallpaper(options),
+    queryFn: async () => {
+      const response = await unsplashClient.photos.getRandom({
+        query: options?.query,
+        orientation: options?.orientation || 'landscape',
+        count: 1
+      });
+      return Array.isArray(response.response) ? response.response[0] : response.response;
+    },
     staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
   });
 }
@@ -12,7 +20,15 @@ export function useRandomWallpaper(options?: { query?: string; orientation?: str
 export function useSearchWallpapers(query: string, page = 1, perPage = 30) {
   return useQuery({
     queryKey: ['searchWallpapers', query, page, perPage],
-    queryFn: () => unsplashClient.searchWallpapers(query, page, perPage),
+    queryFn: async () => {
+      const response = await unsplashClient.search.getPhotos({
+        query,
+        page,
+        perPage,
+        orientation: 'landscape'
+      });
+      return response.response;
+    },
     staleTime: 5 * 60 * 1000,
     enabled: query.length > 0, // Only run query if search term is provided
   });
@@ -21,14 +37,21 @@ export function useSearchWallpapers(query: string, page = 1, perPage = 30) {
 export function useWallpaper(id: string) {
   return useQuery({
     queryKey: ['wallpaper', id],
-    queryFn: () => unsplashClient.getWallpaper(id),
+    queryFn: async () => {
+      const response = await unsplashClient.photos.get({ photoId: id });
+      return response.response;
+    },
     staleTime: 30 * 60 * 1000, // Consider data stale after 30 minutes
   });
 }
 
 export function useTrackDownload() {
   return useMutation({
-    mutationFn: (downloadLocation: string) => unsplashClient.trackDownload(downloadLocation),
+    mutationFn: async (downloadLocation: string) => {
+      // The download tracking is handled automatically by the unsplash-js client
+      // when using the download URL from the photo object
+      await fetch(downloadLocation);
+    },
   });
 }
 
