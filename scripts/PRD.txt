@@ -1,5 +1,5 @@
 # Overview
-MacWall is a modern web application that provides users with a curated collection of high-quality macOS-style wallpapers sourced from Unsplash. The application solves the problem of finding and managing beautiful, high-resolution wallpapers that match the aesthetic of macOS. It targets Mac users, designers, and anyone who appreciates minimalist, clean wallpaper designs.
+Dream Wall is a modern web application that provides users with a curated collection of high-quality macOS-style wallpapers sourced from Unsplash. The application solves the problem of finding and managing beautiful, high-resolution wallpapers that match the aesthetic of macOS. It targets Mac users, designers, and anyone who appreciates minimalist, clean wallpaper designs.
 
 # Core Features
 

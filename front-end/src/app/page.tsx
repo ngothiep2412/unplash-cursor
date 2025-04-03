@@ -25,7 +25,7 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="mb-8 text-4xl font-bold">MacWall</h1>
+      <h1 className="mb-8 text-4xl font-bold">Dream Wall</h1>
       {wallpaper && (
         <div className="relative aspect-video w-full max-w-4xl overflow-hidden rounded-lg shadow-xl">
           <Image

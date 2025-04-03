@@ -20,7 +20,7 @@ export default function GalleryPage() {
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const { data, isLoading, error } = useUnsplashImages({
-    query: debouncedSearchQuery.trim() || 'nature', // Use 'nature' as fallback when search is empty
+    query: debouncedSearchQuery,
     page,
     perPage: 12,
     ...filters,
@@ -30,8 +30,20 @@ export default function GalleryPage() {
   const totalPages = Math.ceil((data?.total || 0) / 12);
 
   useEffect(() => {
+    // Reset to the first page whenever the search query or filters change
     setPage(1);
   }, [debouncedSearchQuery, filters]);
+
+  useEffect(() => {
+    console.log('Current State:', {
+      page,
+      searchQuery,
+      filters,
+      imagesCount: images.length,
+      isLoading,
+      error: error?.message,
+    });
+  }, [page, searchQuery, filters, images, isLoading, error]);
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900">

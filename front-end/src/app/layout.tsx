@@ -6,7 +6,7 @@ import Providers from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MacWall - Beautiful macOS Wallpapers",
+  title: "Dream Wall - Beautiful macOS Wallpapers",
   description: "A curated collection of high-quality macOS-style wallpapers from Unsplash",
 };
 
